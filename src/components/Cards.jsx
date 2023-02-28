@@ -1,39 +1,24 @@
-import React, { useState } from 'react'
+import { async } from '@firebase/util';
+import { doc, getDocs } from 'firebase/firestore';
+import React, { useEffect, useState } from 'react'
 import ReactStars from 'react-stars'
+import { moviesRef } from '../firbase/firbase';
 
 const Cards = () => {
-    const [data, setData] = useState([
-      {
-        "name": "Avengers",
-        "rating": 5,
-        "year": "2019",
-        "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWEN28__oR5nnoBgKzb-HyonOMW8B3LTsL4A&usqp=CAU"
-      },
-      {
-        "name": "Avengers",
-        "rating": 5,
-        "year": "2019",
-        "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWEN28__oR5nnoBgKzb-HyonOMW8B3LTsL4A&usqp=CAU"
-      },
-      {
-        "name": "Avengers",
-        "rating": 5,
-        "year": "2019",
-        "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWEN28__oR5nnoBgKzb-HyonOMW8B3LTsL4A&usqp=CAU"
-      },
-      {
-        "name": "Avengers",
-        "rating": 5,
-        "year": "2019",
-        "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWEN28__oR5nnoBgKzb-HyonOMW8B3LTsL4A&usqp=CAU"
-      },
-      {
-        "name": "Avengers",
-        "rating": 5,
-        "year": "2019",
-        "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWEN28__oR5nnoBgKzb-HyonOMW8B3LTsL4A&usqp=CAU"
-      },
-    ]);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    async function getData() {
+      setLoading(true)
+      const _data = await getDocs(moviesRef);
+      _data.forEach((doc) => {
+        setData((prv)=>[...prv, doc.data()])
+      })
+      setLoading(false)
+    }
+    getData()
+  },[])
   return (
       <div className='flex flex-wrap justify-between p-3 mt-2'>
           {data.map((e, i) => {
@@ -42,9 +27,9 @@ const Cards = () => {
                   key={i}
                   className="card font-medium shadow-lg hover:-translate-y-3 cursor-pointer mt-6 transition-all duration-500"
                 >
-                  <img src={e.img} alt="" />
+                  <img src={e.image} alt="" />
                   <h1>
-                    <span className="text-gray-500">Name:</span> {e.name}
+                    <span className="text-gray-500">Name:</span> {e.title}
                   </h1>
                   <h1 className="flex items-center">
                     {" "}
@@ -52,7 +37,7 @@ const Cards = () => {
                      <ReactStars
                       size={20}
                       half={true}
-                      value={e.rating}
+                      value={5}
                       edit={false}
                     />
                   </h1>
