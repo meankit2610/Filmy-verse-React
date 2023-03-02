@@ -1,6 +1,8 @@
 import { async } from '@firebase/util';
 import { doc, getDocs } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react'
+import { ThreeDots } from 'react-loader-spinner';
+import { Link } from 'react-router-dom';
 import ReactStars from 'react-stars'
 import { moviesRef } from '../firbase/firbase';
 
@@ -13,7 +15,7 @@ const Cards = () => {
       setLoading(true)
       const _data = await getDocs(moviesRef);
       _data.forEach((doc) => {
-        setData((prv)=>[...prv, doc.data()])
+        setData((prv)=>[...prv, {...(doc.data()), id:doc.id}])
       })
       setLoading(false)
     }
@@ -21,13 +23,14 @@ const Cards = () => {
   },[])
   return (
       <div className='flex flex-wrap justify-between p-3 mt-2'>
-          {data.map((e, i) => {
+          {loading ? <div className='w-full flex justify-center items-center h-96'> <ThreeDots height={40} color="white"/></div> :
+          data.map((e, i) => {
               return (
-                <div
+                <Link to={`/detail/${e.id}`}><div
                   key={i}
                   className="card font-medium shadow-lg hover:-translate-y-3 cursor-pointer mt-6 transition-all duration-500"
                 >
-                  <img src={e.image} alt="" />
+                  <img className='h-60 md:h-72' src={e.image} alt="" />
                   <h1>
                     <span className="text-gray-500">Name:</span> {e.title}
                   </h1>
@@ -46,6 +49,7 @@ const Cards = () => {
                     <span className="text-gray-500">Year: </span> {e.year}{" "}
                   </h1>
                 </div>
+                </Link>
               );
           })}
       </div>
